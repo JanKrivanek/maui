@@ -1,4 +1,6 @@
-﻿using Microsoft.Maui;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System.Reflection.PortableExecutable;
+using Microsoft.Maui;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Controls.Hosting;
 using Microsoft.Maui.Hosting;
@@ -7,12 +9,26 @@ namespace Maui.Controls.Sample
 {
 	public static class MauiProgram
 	{
-		public static MauiApp CreateMauiApp() =>
-			MauiApp
-				.CreateBuilder()
-				.UseMauiMaps()
-				.UseMauiApp<App>()
-				.Build();
+		public static MauiApp? MauiApp2 { get; set; }
+
+		public static MauiApp CreateMauiApp()
+		{
+			var builder = MauiApp
+			.CreateBuilder()
+			.UseMauiMaps()
+				.UseMauiApp<App>();
+			builder.ConfigureContainer(new DefaultServiceProviderFactory(new ServiceProviderOptions
+			{
+				ValidateOnBuild = true,
+				ValidateScopes = true,
+			}));
+
+			var boop2 = builder.Build();
+
+			MauiApp2 = boop2;
+
+			return boop2;
+		}
 	}
 
 	class App : Application
