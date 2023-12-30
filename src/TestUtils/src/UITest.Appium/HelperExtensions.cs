@@ -132,6 +132,51 @@ namespace UITest.Appium
 			});
 		}
 
+		/// <summary>
+		/// Return the currently presented alert.
+		/// </summary>
+		/// <param name="app">Represents the main gateway to interact with an app.</param>
+		public static IUIElement? GetAlert(this IApp app)
+		{
+			return app.GetAlerts().FirstOrDefault();
+		}
+
+		/// <summary>
+		/// Return the currently presented alerts.
+		/// </summary>
+		/// <param name="app">Represents the main gateway to interact with an app.</param>
+		public static IReadOnlyCollection<IUIElement> GetAlerts(this IApp app)
+		{
+			var result = app.CommandExecutor.Execute("getAlerts", ImmutableDictionary<string, object>.Empty);
+			return (IReadOnlyCollection<IUIElement>?)result.Value?? Array.Empty<IUIElement>();
+		}
+
+		/// <summary>
+		/// Return the buttons in the alert.
+		/// </summary>
+		/// <param name="alertElement">The element that represents the alert.</param>
+		public static IReadOnlyCollection<IUIElement> GetAlertButtons(this IUIElement alertElement)
+		{
+			var result = alertElement.Command.Execute("getAlertButtons", new Dictionary<string, object>
+			{
+				["element"] = alertElement
+			});
+			return (IReadOnlyCollection<IUIElement>?)result.Value ?? Array.Empty<IUIElement>();
+		}
+
+		/// <summary>
+		/// Return the text messages in the alert.
+		/// </summary>
+		/// <param name="alertElement">The element that represents the alert.</param>
+		public static IReadOnlyCollection<string> GetAlertText(this IUIElement alertElement)
+		{
+			var result = alertElement.Command.Execute("getAlertText", new Dictionary<string, object>
+			{
+				["element"] = alertElement
+			});
+			return (IReadOnlyCollection<string>?)result.Value ?? Array.Empty<string>();
+		}
+
 		public static IUIElement WaitForElement(this IApp app, string marked, string timeoutMessage = "Timed out waiting for element...", TimeSpan? timeout = null, TimeSpan? retryFrequency = null, TimeSpan? postTimeout = null)
 		{
 			IUIElement result() => app.FindElement(marked);
@@ -140,10 +185,32 @@ namespace UITest.Appium
 			return results;
 		}
 
+		public static IUIElement WaitForElement(
+			this IApp app,
+			Func<IUIElement?> query,
+			string? timeoutMessage = null,
+			TimeSpan? timeout = null,
+			TimeSpan? retryFrequency = null)
+		{
+			var results = Wait(query, i => i != null, timeoutMessage, timeout, retryFrequency);
+
+			return results;
+		}
+
 		public static void WaitForNoElement(this IApp app, string marked, string timeoutMessage = "Timed out waiting for no element...", TimeSpan? timeout = null, TimeSpan? retryFrequency = null, TimeSpan? postTimeout = null)
 		{
 			IUIElement result() => app.FindElement(marked);
 			WaitForNone(result, timeoutMessage, timeout, retryFrequency);
+		}
+
+		public static void WaitForNoElement(
+			this IApp app,
+			Func<IUIElement?> query,
+			string? timeoutMessage = null,
+			TimeSpan? timeout = null,
+			TimeSpan? retryFrequency = null)
+		{
+			Wait(query, i => i is null, timeoutMessage, timeout, retryFrequency);
 		}
 
 		public static bool WaitForTextToBePresentInElement(this IApp app, string automationId, string text)
@@ -503,8 +570,8 @@ namespace UITest.Appium
 			app.CommandExecutor.Execute("back", ImmutableDictionary<string, object>.Empty);
 		}
 
-		static IUIElement Wait(Func<IUIElement> query,
-			Func<IUIElement, bool> satisfactory,
+		static IUIElement Wait(Func<IUIElement?> query,
+			Func<IUIElement?, bool> satisfactory,
 			string? timeoutMessage = null,
 			TimeSpan? timeout = null, TimeSpan? retryFrequency = null)
 		{
@@ -514,7 +581,7 @@ namespace UITest.Appium
 
 			DateTime start = DateTime.Now;
 
-			IUIElement result = query();
+			IUIElement? result = query();
 
 			while (!satisfactory(result))
 			{
@@ -530,7 +597,7 @@ namespace UITest.Appium
 				result = query();
 			}
 
-			return result;
+			return result!;
 		}
 
 		static IUIElement WaitForAtLeastOne(Func<IUIElement> query,
