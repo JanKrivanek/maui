@@ -52,9 +52,13 @@ namespace Microsoft.Maui.Hosting
 	{
 		public IDispatcher AppDispatcher { get; }
 
-		public ApplicationDispatcher()
+		public ApplicationDispatcher() : this(Dispatcher.GetForCurrentThread()!)
 		{
-			AppDispatcher = Dispatcher.GetForCurrentThread()!;
+		}
+
+		internal ApplicationDispatcher(IDispatcher dispatcher)
+		{
+			AppDispatcher = dispatcher;
 		}
 	}
 }
