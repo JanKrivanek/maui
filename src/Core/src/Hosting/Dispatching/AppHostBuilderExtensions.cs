@@ -48,7 +48,7 @@ namespace Microsoft.Maui.Hosting
 	/// If the user tries to retrieve `IDispatcher` from the root `IServiceProvider` on a background thread
 	/// this serves as a way to retrieve the App level dispatcher
 	/// </summary>
-	class ApplicationDispatcher
+	internal class ApplicationDispatcher
 	{
 		public IDispatcher AppDispatcher { get; }
 

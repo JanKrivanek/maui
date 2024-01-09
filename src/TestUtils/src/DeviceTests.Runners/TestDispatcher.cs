@@ -30,9 +30,7 @@ namespace Microsoft.Maui.TestUtils.DeviceTests.Runners
 			{
 				if (s_dispatcher is null)
 				{
-					// This will retrieve the app level dispatcher
-					// IDispatcher is a scoped service, we don't want to retrieve it from the root provider
-					s_dispatcher = TestServices.Services.CreateScope().ServiceProvider.GetService<IDispatcher>();
+					s_dispatcher = TestServices.Services.GetRequiredService<Hosting.ApplicationDispatcher>().AppDispatcher;
 				}
 
 				if (s_dispatcher is null)
