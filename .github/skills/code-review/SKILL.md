@@ -223,3 +223,4 @@ The script wraps the review in a collapsible `<details>` section, adds PR metada
 - [ ] Devil's advocate check performed
 - [ ] Verdict is consistent with findings
 - [ ] Output follows the format above
+
