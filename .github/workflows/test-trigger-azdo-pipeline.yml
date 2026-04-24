@@ -1,5 +1,6 @@
 # Test workflow: Trigger an AzDO pipeline from a PR event using OIDC.
 # This is a test to validate the managed identity + OIDC + AzDO integration.
+# Test run: 1
 
 name: Test - Trigger AzDO Pipeline on PR
 
