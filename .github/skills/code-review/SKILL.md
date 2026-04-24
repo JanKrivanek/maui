@@ -224,3 +224,6 @@ The script wraps the review in a collapsible `<details>` section, adds PR metada
 - [ ] Verdict is consistent with findings
 - [ ] Output follows the format above
 
+# test eval trigger
+# test eval trigger
+# trigger v3 test
